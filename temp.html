@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Tempsens — Thermal Engineering Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --red:#C0392B;--red-dark:#7B1A10;--red-glow:rgba(192,57,43,0.6);
+  --gold:#E8A020;--coal:#0A0A0A;--char:#141414;--slate:#1E1E1E;
+  --mist:#F2F0ED;--white:#FFFFFF;--border:rgba(255,255,255,0.08);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--coal);color:var(--white);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--red);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,opacity 0.2s;
+  mix-blend-mode:normal;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(192,57,43,0.5);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s ease-out,width 0.3s,height 0.3s,border-color 0.2s;
+}
+body:hover #cursor{opacity:1;}
+
+/* WEBGL CANVAS */
+#hero-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;
+}
+
+/* ══ FIRE CANVAS (ALL OVER THE WEBSITE) ══ */
+#fire-canvas{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+  z-index:-1;
+  opacity:0.65;
+}
+
+/* ══ HEADER ══ */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:0 3rem;
+  display:flex;align-items:center;height:70px;
+  background:rgba(10,10,10,0.8);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  transition:background 0.4s;
+}
+.site-header img{height:38px;width:auto;}
+.nav-links{margin-left:auto;display:flex;gap:2rem;align-items:center;}
+.nav-links a{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:rgba(255,255,255,0.55);
+  text-decoration:none;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--white);}
+.nav-cta{
+  background:var(--red);color:var(--white)!important;
+  padding:8px 20px;border-radius:4px;
+  transition:background 0.2s!important;
+}
+.nav-cta:hover{background:#96281B!important;}
+
+/* ══ HERO ══ */
+.hero{
+  position:relative;height:100vh;min-height:700px;
+  display:flex;align-items:center;
+  overflow:hidden;
+}
+.hero-bg-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(10,10,10,0.92) 0%,rgba(10,10,10,0.6) 60%,rgba(10,10,10,0.3) 100%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 6rem;
+  max-width:900px;
+}
+.hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.25em;
+  color:var(--red);text-transform:uppercase;
+  margin-bottom:1.25rem;
+  opacity:0;transform:translateY(20px);
+}
+.hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3.5rem,8vw,7rem);
+  line-height:0.95;letter-spacing:0.02em;
+  color:var(--white);
+  margin-bottom:1.5rem;
+  opacity:0;transform:translateY(30px);
+}
+.hero h1 em{
+  font-style:normal;
+  -webkit-text-stroke:2px var(--red);
+  color:transparent;
+}
+.hero-sub{
+  font-size:1.1rem;font-weight:400;
+  color:rgba(255,255,255,0.6);
+  max-width:520px;line-height:1.8;
+  margin-bottom:2.5rem;
+  opacity:0;transform:translateY(20px);
+}
+.hero-bar{
+  display:flex;gap:0;
+  opacity:0;transform:translateY(20px);
+}
+.hero-stat{
+  padding:1.25rem 2rem 1.25rem 0;
+  border-right:1px solid rgba(255,255,255,0.12);
+  margin-right:2rem;
+}
+.hero-stat:last-child{border-right:none;margin-right:0;}
+.hero-stat .num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:3rem;letter-spacing:0.03em;
+  color:var(--white);
+  line-height:1;
+}
+.hero-stat .lab{
+  font-size:11px;color:rgba(255,255,255,0.4);
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-top:4px;
+}
+.scroll-hint{
+  position:absolute;bottom:2.5rem;left:6rem;
+  display:flex;align-items:center;gap:0.75rem;
+  opacity:0;
+}
+.scroll-hint span{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+}
+.scroll-line{
+  width:60px;height:1px;
+  background:linear-gradient(to right,var(--red),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:0.4;transform:scaleX(1);}50%{opacity:1;transform:scaleX(1.3);transform-origin:left;}}
+
+/* ══ INTERACTIVE 3D PRODUCT SHOWCASE (HERO) ══ */
+.product-3d-container {
+  position: absolute;
+  right: 6%;
+  top: 25%;
+  width: 520px;
+  height: 380px;
+  perspective: 1200px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: transform 0.1s ease-out;
+}
+.product-3d-card {
+  width: 100%;
+  height: auto;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease-out;
+  cursor: grab;
+}
+.product-3d-card:active {
+  cursor: grabbing;
+}
+.product-3d-card img {
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 25px 45px rgba(0,0,0,0.85)) drop-shadow(0 0 25px rgba(192,57,43,0.35));
+  transform: translateZ(80px);
+}
+
+/* Responsive 3D container */
+@media (max-width: 1250px) {
+  .product-3d-container {
+    width: 420px;
+    right: 3%;
+  }
+}
+@media (max-width: 1100px) {
+  .hero {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: auto;
+    padding: 120px 0 60px;
+  }
+  .hero-content {
+    padding: 0 3rem;
+    max-width: 100%;
+  }
+  .product-3d-container {
+    position: relative;
+    right: auto;
+    top: auto;
+    margin: 3rem auto 0;
+    width: 90%;
+    max-width: 480px;
+    height: 280px;
+  }
+}
+
+/* ══ AMBIENT DRIFTING 3D PRODUCTS ══ */
+.ambient-product {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  width: 250px;
+  opacity: 0.14;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.7)) drop-shadow(0 0 15px rgba(192,57,43,0.18));
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease-out;
+}
+.ambient-product img {
+  width: 100%;
+  height: auto;
+}
+
+/* ══ SECTIONS (SEMI-TRANSPARENT BACKGROUNDS TO SHOW THE BACKGROUND FIRE) ══ */
+section{position:relative;overflow:hidden;}
+.s-inner{max-width:1100px;margin:0 auto;padding:6rem 3rem;}
+.s-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--red);
+  display:block;margin-bottom:0.6rem;
+}
+.s-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.2rem,4vw,3.5rem);
+  letter-spacing:0.03em;line-height:0.95;
+  margin-bottom:1.25rem;
+}
+.s-body{
+  font-size:1rem;line-height:1.85;
+  color:rgba(255,255,255,0.55);
+  max-width:560px;
+}
+.red-divider{
+  width:40px;height:3px;
+  background:var(--red);border-radius:2px;
+  margin-bottom:1.5rem;
+}
+
+/* WHO WE ARE */
+.who-section{background:rgba(10,10,10,0.45); position: relative;}
+.who-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;margin-top:3rem;
+  align-items:start;
+}
+@media(max-width:768px){.who-grid{grid-template-columns:1fr;}}
+.who-body{font-size:0.97rem;line-height:1.85;color:rgba(255,255,255,0.55);}
+.story-quote{
+  position:relative;
+  background:linear-gradient(135deg,rgba(192,57,43,0.15),rgba(192,57,43,0.05));
+  border:1px solid rgba(192,57,43,0.25);
+  border-radius:12px;padding:2rem;margin-top:2rem;
+  overflow:hidden;
+}
+.story-quote::before{
+  content:'';position:absolute;top:-10px;left:16px;
+  font-size:5rem;color:rgba(192,57,43,0.12);
+  font-family:serif;line-height:1;
+}
+.story-quote p{
+  font-size:1.05rem;font-style:italic;
+  color:rgba(255,255,255,0.8);line-height:1.7;
+  position:relative;z-index:1;
+}
+.story-quote cite{
+  display:block;margin-top:1rem;
+  font-size:0.75rem;font-style:normal;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(192,57,43,0.8);
+}
+
+/* METRICS */
+.metrics-section{
+  background:rgba(20,20,20,0.65);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.metrics-section .s-inner{padding:5rem 3rem;}
+.metric-row{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:1px;
+  background:var(--border);
+  border-radius:12px;overflow:hidden;
+  margin-top:3rem;
+}
+@media(max-width:900px){.metric-row{grid-template-columns:repeat(3,1fr);}}
+.metric-cell{
+  background:var(--char);
+  padding:2rem 1.5rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.metric-cell::after{
+  content:'';position:absolute;
+  bottom:0;left:50%;transform:translateX(-50%);
+  width:0;height:2px;background:var(--red);
+  transition:width 0.5s ease;
+}
+.metric-cell:hover::after{width:80%;}
+.metric-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.8rem;letter-spacing:0.05em;
+  color:var(--white);line-height:1;
+}
+.metric-label{
+  font-size:10px;color:rgba(255,255,255,0.35);
+  text-transform:uppercase;letter-spacing:0.1em;margin-top:6px;
+}
+.accred-strip{
+  display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:2rem;
+}
+.accred-badge{
+  font-size:0.7rem;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;padding:5px 12px;border-radius:4px;
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.45);
+  transition:all 0.2s;
+}
+.accred-badge:hover{border-color:rgba(192,57,43,0.5);color:rgba(192,57,43,0.9);}
+.accred-badge.feat{
+  border-color:rgba(192,57,43,0.4);
+  color:rgba(192,57,43,0.9);
+  background:rgba(192,57,43,0.08);
+}
+
+/* CAPABILITIES 3D CARDS */
+.cap-section{background:rgba(10,10,10,0.45); position: relative;}
+.cap-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;margin-top:3rem;
+}
+@media(max-width:900px){.cap-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.cap-grid{grid-template-columns:1fr;}}
+.cap-card{
+  position:relative;
+  background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:1.75rem;
+  overflow:hidden;
+  transform-style:preserve-3d;
+  transform:perspective(800px) rotateX(0deg) rotateY(0deg);
+  transition:border-color 0.3s,box-shadow 0.3s;
+  cursor:default;
+}
+.cap-card:hover{
+  border-color:rgba(192,57,43,0.35);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px rgba(192,57,43,0.1);
+}
+.cap-card-glow{
+  position:absolute;top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(192,57,43,0.08) 0%,transparent 60%);
+  pointer-events:none;opacity:0;transition:opacity 0.3s;
+}
+.cap-card:hover .cap-card-glow{opacity:1;}
+.cap-icon-3d{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,rgba(192,57,43,0.25),rgba(192,57,43,0.08));
+  border:1px solid rgba(192,57,43,0.3);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.25rem;
+  transition:transform 0.3s,box-shadow 0.3s;
+}
+.cap-card:hover .cap-icon-3d{
+  transform:translateZ(20px) scale(1.1);
+  box-shadow:0 8px 20px rgba(192,57,43,0.3);
+}
+.cap-icon-3d i{font-size:22px;color:var(--red);}
+.cap-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--white);margin-bottom:0.5rem;line-height:1.2;
+}
+.cap-desc{font-size:0.8rem;line-height:1.65;color:rgba(255,255,255,0.45);}
+.cap-range{
+  display:inline-block;margin-top:0.8rem;
+  font-size:0.68rem;font-weight:700;letter-spacing:0.06em;
+  padding:3px 10px;border-radius:3px;
+  background:rgba(192,57,43,0.15);
+  border:1px solid rgba(192,57,43,0.3);
+  color:rgba(192,57,43,0.9);
+}
+
+/* VALUE CHAIN */
+.vc-section{
+  background:rgba(10,10,10,0.45);
+  position:relative;
+}
+.vc-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(192,57,43,0.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.vc-header{text-align:center;margin-bottom:4rem;}
+.vc-header .s-title{font-size:clamp(2rem,5vw,4rem);}
+.vc-header .s-body{margin:0 auto;}
+
+.vc-flow{
+  display:flex;flex-direction:column;
+  align-items:center;gap:0;
+  position:relative;
+}
+/* vertical spine */
+.vc-flow::before{
+  content:'';
+  position:absolute;
+  top:0;bottom:0;left:50%;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(192,57,43,0.3) 10%,rgba(192,57,43,0.3) 90%,transparent);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.vc-node{
+  width:100%;max-width:700px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;
+  padding:1.75rem 2rem;
+  display:grid;
+  grid-template-columns:56px 1fr;
+  gap:0 1.25rem;
+  position:relative;
+  opacity:0;transform:translateY(40px) scale(0.97);
+  transition:border-color 0.3s,background 0.3s,box-shadow 0.3s;
+  z-index:2;
+}
+.vc-node.visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity 0.6s ease,transform 0.6s ease,border-color 0.3s,background 0.3s;
+}
+.vc-node:hover{
+  background:rgba(192,57,43,0.06);
+  border-color:rgba(192,57,43,0.3);
+  box-shadow:0 24px 80px rgba(0,0,0,0.4),0 0 40px rgba(192,57,43,0.08);
+}
+.vc-node.star-node{
+  background:rgba(192,57,43,0.09);
+  border-color:rgba(192,57,43,0.4);
+}
+.vc-node.star-node:hover{
+  background:rgba(192,57,43,0.14);
+  border-color:rgba(192,57,43,0.6);
+  box-shadow:0 0 60px rgba(192,57,43,0.2);
+}
+.vc-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2.5rem;letter-spacing:0.05em;
+  color:var(--red);
+  line-height:1;padding-top:4px;
+  text-shadow:0 0 20px rgba(192,57,43,0.5);
+}
+.vc-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1.15rem;font-weight:700;
+  color:var(--white);margin-bottom:0.4rem;line-height:1.2;
+}
+.vc-desc{font-size:0.82rem;line-height:1.7;color:rgba(255,255,255,0.5);margin-bottom:0.75rem;}
+.vc-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.6rem;}
+.vc-tag{
+  font-size:0.68rem;font-weight:600;letter-spacing:0.05em;
+  padding:2px 8px;border-radius:3px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.09);
+  color:rgba(255,255,255,0.45);
+}
+.vc-tag.r{
+  background:rgba(192,57,43,0.15);
+  border-color:rgba(192,57,43,0.35);
+  color:rgba(255,165,155,0.9);
+}
+.vc-output{
+  font-size:0.72rem;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:rgba(192,57,43,0.85);
+  display:flex;align-items:center;gap:0.4rem;
+}
+.vc-output::before{content:'→';font-size:1rem;}
+.vc-arrow-wrap{
+  height:36px;display:flex;align-items:center;
+  justify-content:center;z-index:2;position:relative;
+}
+.vc-arrow-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--red);
+  box-shadow:0 0 10px rgba(192,57,43,0.8);
+  animation:pulseDot 1.5s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:0.7;}50%{transform:scale(1.5);opacity:1;}}
+
+.vc-feedback{
+  width:100%;max-width:700px;
+  background:rgba(192,57,43,0.06);
+  border:1px dashed rgba(192,57,43,0.35);
+  border-radius:14px;padding:1.75rem 2rem;
+  display:grid;grid-template-columns:56px 1fr;gap:0 1.25rem;
+  z-index:2;position:relative;
+  opacity:0;transform:translateY(40px);
+}
+.vc-feedback.visible{opacity:1;transform:translateY(0);transition:opacity 0.6s,transform 0.6s;}
+
+.dist-note{
+  max-width:700px;width:100%;
+  background:rgba(10,10,10,0.7);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;padding:1rem 1.5rem;
+  z-index:2;position:relative;
+  margin-top:0.75rem;
+}
+.dist-note p{font-size:0.8rem;color:rgba(255,255,255,0.4);line-height:1.65;}
+.dist-note strong{color:rgba(255,255,255,0.75);}
+.pill-row{display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.6rem;}
+.pill{
+  font-size:0.68rem;font-weight:700;letter-spacing:0.04em;
+  padding:3px 10px;border-radius:3px;
+}
+.pill.no{
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,80,60,0.7);
+  border:1px solid rgba(255,80,60,0.2);
+  text-decoration:line-through;
+}
+.pill.yes{
+  background:rgba(192,57,43,0.18);
+  border:1px solid rgba(192,57,43,0.4);
+  color:rgba(255,165,155,0.95);
+}
+
+/* INDUSTRIES MARQUEE */
+.ind-section{
+  background:rgba(20,20,20,0.65);
+  border-top:1px solid var(--border);
+  padding:4rem 0;
+  overflow:hidden;
+}
+.ind-header{text-align:center;padding:0 3rem 3rem;}
+.ind-track-wrap{
+  position:relative;
+  mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);
+  -webkit-mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);
+}
+.ind-track{
+  display:flex;gap:0;
+  animation:marqueeSpin 30s linear infinite;
+  width:max-content;
+}
+.ind-track:hover{animation-play-state:paused;}
+@keyframes marqueeSpin{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.ind-chip{
+  flex-shrink:0;
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.75rem 1.75rem;
+  margin:0 0.4rem;
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:100px;
+  background:rgba(255,255,255,0.03);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:0.85rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+  white-space:nowrap;
+  transition:all 0.25s;
+}
+.ind-chip:hover{
+  background:rgba(192,57,43,0.12);
+  border-color:rgba(192,57,43,0.4);
+  color:rgba(255,165,155,0.9);
+  transform:scale(1.05);
+}
+.ind-chip.hot{
+  border-color:rgba(192,57,43,0.35);
+  color:rgba(255,140,120,0.85);
+  background:rgba(192,57,43,0.08);
+}
+.ind-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(192,57,43,0.6);flex-shrink:0;
+}
+.ind-chip.hot .ind-dot{background:var(--red);box-shadow:0 0 6px var(--red);}
+
+/* WHY TEMPSENS */
+.why-section{background:rgba(10,10,10,0.45); position: relative;}
+.why-rows{margin-top:2.5rem;}
+.why-row{
+  display:flex;align-items:flex-start;gap:1.5rem;
+  padding:1.75rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  opacity:0;transform:translateX(-30px);
+  transition:opacity 0.5s,transform 0.5s;
+}
+.why-row.visible{opacity:1;transform:translateX(0);}
+.why-row:last-child{border-bottom:none;}
+.why-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:2rem;letter-spacing:0.05em;
+  color:var(--red);min-width:48px;line-height:1;
+}
+.why-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--white);margin-bottom:0.35rem;
+}
+.why-body{font-size:0.85rem;line-height:1.75;color:rgba(255,255,255,0.45);}
+
+/* VALUES */
+.val-section{
+  background:rgba(20,20,20,0.65);
+  border-top:1px solid var(--border);
+}
+.val-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1.25rem;margin-top:3rem;
+}
+@media(max-width:900px){.val-grid{grid-template-columns:1fr 1fr;}}
+.val-card{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;padding:1.75rem;
+  transition:all 0.3s;
+  opacity:0;transform:translateY(30px) scale(0.96);
+}
+.val-card.visible{opacity:1;transform:translateY(0) scale(1);}
+.val-card:hover{
+  background:rgba(192,57,43,0.06);
+  border-color:rgba(192,57,43,0.25);
+  transform:translateY(-4px) scale(1.01);
+}
+.val-icon{font-size:26px;color:var(--red);margin-bottom:1rem;display:block;}
+.val-heading{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:700;
+  color:var(--white);margin-bottom:0.4rem;
+}
+.val-body{font-size:0.78rem;line-height:1.7;color:rgba(255,255,255,0.4);}
+
+/* CTA */
+.cta-section{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#7B1A10 0%,var(--red) 60%,#E03020 100%);
+  padding:5rem 3rem;text-align:center;
+}
+.cta-section::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.cta-section h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.5rem,5vw,4.5rem);
+  letter-spacing:0.03em;line-height:0.95;
+  color:var(--white);margin-bottom:1rem;
+  position:relative;z-index:1;
+}
+.cta-section p{
+  font-size:1.1rem;color:rgba(255,255,255,0.75);
+  max-width:500px;margin:0 auto 2.5rem;line-height:1.7;
+  position:relative;z-index:1;
+}
+.cta-btn{
+  position:relative;z-index:1;
+  display:inline-block;
+  background:var(--white);color:var(--red);
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:0.95rem;letter-spacing:0.12em;
+  text-transform:uppercase;padding:14px 36px;border-radius:6px;
+  border:none;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;
+  text-decoration:none;
+}
+.cta-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(0,0,0,0.3);
+}
+
+/* ══ THERMOCOUPLE SCENE ══ */
+#tc-canvas{
+  position:absolute;right:0;top:0;
+  width:50%;height:100%;
+  pointer-events:none;opacity:0.6;
+}
+
+/* SCROLL REVEAL util */
+.reveal{opacity:0;transform:translateY(40px);}
+.reveal.visible{
+  opacity:1;transform:translateY(0);
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
+
+/* GLITCH TITLE EFFECT */
+@keyframes glitch1{
+  0%{clip-path:polygon(0 0,100% 0,100% 35%,0 35%);}
+  100%{clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);}
+}
+
+/* NOISE OVERLAY */
+.noise{
+  position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="fire-canvas"></canvas>
+
+<!-- HEADER -->
+<header class="site-header" id="header">
+  <img id="logo.png" alt="Tempsens">
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow" id="he-eyebrow">Since 1990 · Udaipur, India · 75+ Countries</p>
+    <h1 id="he-h1">Where Thermal<br>Engineering<br><em>Meets Reality</em></h1>
+    <p class="hero-sub" id="he-sub">Process plants don't run on specifications. They run on outcomes. For over 35 years, Tempsens has engineered temperature measurement and thermal systems around real industrial conditions.</p>
+    <div class="hero-bar" id="he-bar">
+      <div class="hero-stat"><div class="num" data-target="35" data-suffix="+">0+</div><div class="lab">Years active</div></div>
+      <div class="hero-stat"><div class="num" data-target="5000" data-suffix="+">0+</div><div class="lab">Products delivered</div></div>
+      <div class="hero-stat"><div class="num" data-target="75" data-suffix="+">0+</div><div class="lab">Countries served</div></div>
+      <div class="hero-stat"><div class="num" data-target="14" data-suffix="+">0+</div><div class="lab">Industry verticals</div></div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE 3D PRODUCT SHOWCASE -->
+  <div class="product-3d-container" id="product-3d-container">
+    <div class="product-3d-card" id="product-3d-card">
+      <img id="showcase-img" alt="Interactive Tempsens Thermocouple">
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<!-- WHO WE ARE -->
+<section class="who-section">
+  <!-- 3D Ambient Product (reacts to mouse) -->
+  <div class="ambient-product" id="ambient-p1" style="top: 10%; left: -5%;">
+    <img alt="Ambient thermocouple">
+  </div>
+  <div class="s-inner">
+    <div class="reveal">
+      <span class="s-label">Who we are</span>
+      <div class="red-divider"></div>
+      <h2 class="s-title">Not just a manufacturer.<br>A thermal engineering partner.</h2>
+    </div>
+    <div class="who-grid">
+      <div class="reveal">
+        <p class="who-body">At Tempsens, we believe the right temperature measurement solution cannot be selected from a catalogue. It needs to be engineered around the process — the environment, the material, the thermal profile, the installation constraints, and the process outcome that actually matters.</p>
+        <br>
+        <p class="who-body">Founded in Udaipur, India in 1990, Tempsens has grown from a precision thermocouple manufacturer into a full-spectrum thermal engineering company. Today, our solutions cover contact temperature measurement, non-contact pyrometry, thermal imaging, process heating, industrial furnaces, calibration systems, and high-temperature cabling.</p>
+      </div>
+      <div class="reveal">
+        <p class="who-body">Across steel plants, glass lines, pharmaceutical facilities, cement kilns, refineries, and aerospace test rigs, Tempsens instruments are the ones engineers trust when measurement errors are not an option.</p>
+        <div class="story-quote">
+          <p>"The furnace temperature looked stable. Product quality still dropped. The issue wasn't the reading — it was the measurement point. That's the difference between a product supplier and an engineering partner."</p>
+          <cite>— Tempsens Application Engineering Team</cite>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics-section">
+  <div class="s-inner">
+    <div class="reveal">
+      <span class="s-label">Tempsens by the numbers</span>
+      <div class="red-divider"></div>
+      <h2 class="s-title">Decades of thermal expertise</h2>
+    </div>
+    <div class="metric-row">
+      <div class="metric-cell reveal">
+        <div class="metric-num counter" data-target="1990" data-suffix="">1990</div>
+        <div class="metric-label">Year founded</div>
+      </div>
+      <div class="metric-cell reveal">
+        <div class="metric-num counter" data-target="1000" data-suffix="+">0+</div>
+        <div class="metric-label">Active clients</div>
+      </div>
+      <div class="metric-cell reveal">
+        <div class="metric-num">ISO</div>
+        <div class="metric-label">9001:2015 certified</div>
+      </div>
+      <div class="metric-cell reveal">
+        <div class="metric-num">NABL</div>
+        <div class="metric-label">Accredited lab</div>
+      </div>
+      <div class="metric-cell reveal">
+        <div class="metric-num">R&amp;D</div>
+        <div class="metric-label">In-house engineering</div>
+      </div>
+    </div>
+    <div class="accred-strip reveal">
+      <span class="accred-badge feat">ISO 9001:2015</span>
+      <span class="accred-badge feat">NABL Accredited</span>
+      <span class="accred-badge">CE Marked Products</span>
+      <span class="accred-badge">ATEX Compliant</span>
+      <span class="accred-badge">IECEx Certified</span>
+      <span class="accred-badge">BIS Licensed</span>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section class="cap-section">
+  <!-- 3D Ambient Product (reacts to mouse) -->
+  <div class="ambient-product" id="ambient-p2" style="bottom: 5%; right: -5%;">
+    <img alt="Ambient thermocouple">
+  </div>
+  <div class="s-inner">
+    <div class="reveal">
+      <span class="s-label">Our capabilities</span>
+      <div class="red-divider"></div>
+      <h2 class="s-title">One partner. Every thermal challenge.</h2>
+      <p class="s-body" style="margin-bottom:0;">Tempsens engineers temperature measurement and thermal control from first principles — from point measurement to full thermal system design.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-thermometer"></i></div>
+        <div class="cap-title">Contact Temperature Sensors</div>
+        <div class="cap-desc">Thermocouples, RTDs, mineral-insulated sensors, multipoint assemblies engineered for industrial accuracy.</div>
+        <span class="cap-range">−196 °C to 3000 °C</span>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-camera"></i></div>
+        <div class="cap-title">Non-contact Pyrometry &amp; Thermal Imaging</div>
+        <div class="cap-desc">Single-color, two-color, and fiber-optic pyrometers. Thermal imagers for process monitoring and quality control.</div>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-flame"></i></div>
+        <div class="cap-title">Process Heating Systems</div>
+        <div class="cap-desc">Cartridge, circulation, band, mica, air, and immersion heaters for industrial heating applications.</div>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-building-factory"></i></div>
+        <div class="cap-title">Industrial Furnaces &amp; Thermal Systems</div>
+        <div class="cap-desc">Custom-engineered heat treatment furnaces, ovens, and thermal processing systems designed around your process.</div>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-adjustments"></i></div>
+        <div class="cap-title">Calibration Systems</div>
+        <div class="cap-desc">Dry block calibrators, blackbody calibrators, temperature baths, and NABL-accredited calibration services.</div>
+      </div>
+      <div class="cap-card reveal">
+        <div class="cap-card-glow"></div>
+        <div class="cap-icon-3d"><i class="ti ti-plug"></i></div>
+        <div class="cap-title">High-temperature Cables</div>
+        <div class="cap-desc">Thermocouple extension, compensating, mineral-insulated, and heat-tracing cables for extreme environments.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE CHAIN -->
+<section class="vc-section">
+  <div class="s-inner">
+    <div class="vc-header reveal">
+      <span class="s-label" style="display:block;margin-bottom:0.5rem;">How we create value</span>
+      <div class="red-divider" style="margin:0 auto 1.5rem;"></div>
+      <h2 class="s-title">The Tempsens Thermal<br>Engineering Value Chain</h2>
+      <p class="s-body" style="margin:0 auto;">From industrial need to operational confidence — a flow of engineering value, not just product movement.</p>
+    </div>
+
+    <div class="vc-flow">
+
+      <div class="vc-node">
+        <div class="vc-num">01</div>
+        <div>
+          <div class="vc-title">Application Intelligence</div>
+          <div class="vc-desc">Every solution starts with the real industrial challenge — process conditions, measurement gaps, energy losses, and safety or compliance requirements.</div>
+          <div class="vc-tags"><span class="vc-tag">Process challenges</span><span class="vc-tag">Measurement gaps</span><span class="vc-tag">Safety &amp; compliance</span></div>
+          <div class="vc-output">Defined application requirement</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node">
+        <div class="vc-num">02</div>
+        <div>
+          <div class="vc-title">Engineering &amp; Solution Design</div>
+          <div class="vc-desc">Sensor and heater selection, custom design for harsh environments, contact and non-contact measurement strategy, and process integration planning — before a product is specified.</div>
+          <div class="vc-tags"><span class="vc-tag">Custom engineering</span><span class="vc-tag">Measurement strategy</span><span class="vc-tag">Process integration</span></div>
+          <div class="vc-output">Application-specific thermal solution blueprint</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node">
+        <div class="vc-num">03</div>
+        <div>
+          <div class="vc-title">R&amp;D &amp; Product Development</div>
+          <div class="vc-desc">Thermocouples, RTDs, pyrometers, heaters, cables, furnaces, and calibration systems — continuously refined through field feedback loops.</div>
+          <div class="vc-tags"><span class="vc-tag">Thermocouples &amp; RTDs</span><span class="vc-tag">Pyrometers</span><span class="vc-tag">Custom solutions</span></div>
+          <div class="vc-output">Reliable, validated industrial-grade products</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node">
+        <div class="vc-num">04</div>
+        <div>
+          <div class="vc-title">Manufacturing &amp; Quality Assurance</div>
+          <div class="vc-desc">ISO 9001:2015-certified precision manufacturing. Tempsens controls material selection, sensor assembly, sheathing, and calibration — ensuring quality no outsourced chain can match.</div>
+          <div class="vc-tags"><span class="vc-tag">ISO 9001:2015</span><span class="vc-tag">NABL calibration</span><span class="vc-tag">Material traceability</span></div>
+          <div class="vc-output">Certified, production-ready instruments</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node star-node">
+        <div class="vc-num">05</div>
+        <div>
+          <div class="vc-title">Global Distribution &amp; Partner Network ★</div>
+          <div class="vc-desc">Where the partner model creates real strategic leverage. Distributors are the local extension of Tempsens engineering capability — not a logistics layer.</div>
+          <div class="vc-tags"><span class="vc-tag r">Local market access</span><span class="vc-tag r">Technical pre-sales</span><span class="vc-tag r">Regional demand generation</span><span class="vc-tag r">Inventory &amp; logistics</span></div>
+          <div class="vc-output">Regional engineering reach at global scale</div>
+        </div>
+      </div>
+      <div class="dist-note">
+        <p>The Tempsens distributor is <strong>not</strong> a reseller or logistics middleman.</p>
+        <div class="pill-row">
+          <span class="pill no">Reseller</span>
+          <span class="pill no">Logistics middleman</span>
+          <span class="pill yes">✓ Regional application partner</span>
+          <span class="pill yes">✓ Technical extension of Tempsens engineering</span>
+          <span class="pill yes">✓ Market intelligence source feeding R&amp;D</span>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node">
+        <div class="vc-num">06</div>
+        <div>
+          <div class="vc-title">Application Support &amp; Commissioning</div>
+          <div class="vc-desc">Installation guidance, field calibration support, application troubleshooting, and process optimisation feedback to ensure correct measurement in real conditions.</div>
+          <div class="vc-tags"><span class="vc-tag">Installation guidance</span><span class="vc-tag">Field calibration</span><span class="vc-tag">Troubleshooting</span></div>
+          <div class="vc-output">Correct measurement in real conditions</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-node">
+        <div class="vc-num">07</div>
+        <div>
+          <div class="vc-title">End Industrial Operations</div>
+          <div class="vc-desc">Steel, glass, cement, oil &amp; gas, pharma, power. Stable processes, reduced downtime, improved quality consistency, and higher energy efficiency.</div>
+          <div class="vc-tags"><span class="vc-tag">Stable processes</span><span class="vc-tag">Reduced downtime</span><span class="vc-tag">Energy efficiency</span></div>
+          <div class="vc-output">Operational reliability and process confidence</div>
+        </div>
+      </div>
+      <div class="vc-arrow-wrap"><div class="vc-arrow-dot"></div></div>
+
+      <div class="vc-feedback">
+        <div class="vc-num">↺</div>
+        <div>
+          <div class="vc-title">Continuous Feedback Loop</div>
+          <div class="vc-desc">Field performance data, failure analysis, and application insights flow back to R&amp;D — creating continuous engineering evolution that makes every Tempsens solution better over time.</div>
+          <div class="vc-tags"><span class="vc-tag">Field data → R&amp;D</span><span class="vc-tag">Failure analysis</span><span class="vc-tag">Product upgrades</span></div>
+          <div class="vc-output">Continuous engineering evolution</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES MARQUEE -->
+<section class="ind-section">
+  <div class="ind-header reveal">
+    <span class="s-label">Industries we serve</span>
+    <div class="red-divider" style="margin:0.5rem auto 1rem;"></div>
+    <h2 class="s-title">Built for the processes<br>that run your plant.</h2>
+  </div>
+  <div class="ind-track-wrap">
+    <div class="ind-track" id="ind-track">
+      <div class="ind-chip hot"><div class="ind-dot"></div>Steel &amp; Metals</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Glass</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Cement &amp; Kiln</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Oil &amp; Gas</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Petrochemical</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Power Generation</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Pharmaceutical</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Heat Treatment</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Plastics &amp; Rubber</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Aerospace</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Defense</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Nuclear</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Automotive</div>
+      <div class="ind-chip"><div class="ind-dot"></div>General Manufacturing</div>
+      <!-- duplicate for seamless loop -->
+      <div class="ind-chip hot"><div class="ind-dot"></div>Steel &amp; Metals</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Glass</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Cement &amp; Kiln</div>
+      <div class="ind-chip hot"><div class="ind-dot"></div>Oil &amp; Gas</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Petrochemical</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Power Generation</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Pharmaceutical</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Heat Treatment</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Plastics &amp; Rubber</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Aerospace</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Defense</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Nuclear</div>
+      <div class="ind-chip"><div class="ind-dot"></div>Automotive</div>
+      <div class="ind-chip"><div class="ind-dot"></div>General Manufacturing</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY TEMPSENS -->
+<section class="why-section">
+  <!-- 3D Ambient Product (reacts to mouse) -->
+  <div class="ambient-product" id="ambient-p3" style="top: 15%; left: -3%;">
+    <img alt="Ambient thermocouple">
+  </div>
+  <div class="s-inner">
+    <div class="reveal">
+      <span class="s-label">Why Tempsens</span>
+      <div class="red-divider"></div>
+      <h2 class="s-title">What makes the engineering difference</h2>
+      <p class="s-body">Many suppliers offer temperature sensors. Fewer offer thermal engineering. At Tempsens, the approach has always been to understand the process first — then engineer the solution.</p>
+    </div>
+    <div class="why-rows">
+      <div class="why-row">
+        <div class="why-num">01</div>
+        <div><div class="why-title">Application engineering built in</div><div class="why-body">Every Tempsens solution begins with a process review. Our application engineers assess installation environment, material compatibility, response time requirements, and calibration needs before recommending a product.</div></div>
+      </div>
+      <div class="why-row">
+        <div class="why-num">02</div>
+        <div><div class="why-title">Full product lifecycle support</div><div class="why-body">From sensor selection and installation guidance to calibration verification, repairs, and replacements — Tempsens supports customers across the full instrument lifecycle. Our NABL-accredited lab ensures measurement traceability.</div></div>
+      </div>
+      <div class="why-row">
+        <div class="why-num">03</div>
+        <div><div class="why-title">Custom engineering capability</div><div class="why-body">Standard sensors fail in non-standard conditions. Tempsens designs and manufactures custom thermocouples, MI assemblies, and thermal systems for high-vibration, high-pressure, high-corrosion applications.</div></div>
+      </div>
+      <div class="why-row">
+        <div class="why-num">04</div>
+        <div><div class="why-title">In-house manufacturing &amp; quality assurance</div><div class="why-body">Tempsens controls the full manufacturing chain — raw material selection, sensor assembly, insulation, sheathing, and calibration — under ISO 9001:2015-certified processes.</div></div>
+      </div>
+      <div class="why-row">
+        <div class="why-num">05</div>
+        <div><div class="why-title">Global reach, local knowledge</div><div class="why-body">With customers across 75+ countries and trained distribution partners, Tempsens provides global product availability alongside application knowledge that reflects real regional operating conditions.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="val-section">
+  <div class="s-inner">
+    <div class="reveal">
+      <span class="s-label">Our principles</span>
+      <div class="red-divider"></div>
+      <h2 class="s-title">Engineering-first.<br>Process-focused.<br>Partner-driven.</h2>
+    </div>
+    <div class="val-grid">
+      <div class="val-card">
+        <i class="ti ti-microscope val-icon"></i>
+        <div class="val-heading">Technical depth</div>
+        <div class="val-body">We invest in understanding processes — not just products. Our team stays current on measurement physics, materials science, and process engineering.</div>
+      </div>
+      <div class="val-card">
+        <i class="ti ti-certificate val-icon"></i>
+        <div class="val-heading">Measurement integrity</div>
+        <div class="val-body">Traceable calibration, documented uncertainty analysis, and quality systems that ensure your measurement is accurate and verifiable.</div>
+      </div>
+      <div class="val-card">
+        <i class="ti ti-users val-icon"></i>
+        <div class="val-heading">Long-term partnership</div>
+        <div class="val-body">Tempsens relationships are built over plant lifecycles — not individual transactions. We measure success by reliability, not units shipped.</div>
+      </div>
+      <div class="val-card">
+        <i class="ti ti-bulb val-icon"></i>
+        <div class="val-heading">Continuous innovation</div>
+        <div class="val-body">Tempsens invests in R&D to extend measurement capabilities into more challenging environments — higher temperatures, more aggressive chemistries, faster dynamics.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Let's discuss your<br>thermal challenge</h2>
+  <p>Application engineers ready to assess your process and recommend the right measurement approach.</p>
+  <a href="#" class="cta-btn">Get in touch ↗</a>
+</section>
+
+<script>
+// ══════════════════════════════════════════
+// ASSET LOADER (PREVENTS OFFLINE/BROKEN PATHS)
+// ══════════════════════════════════════════
+const logoBase64 = "REPLACE_LOGO_BASE64";
+const thermocoupleBase64 = "REPLACE_TC_BASE64";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const logoEl = document.getElementById("logo.png");
+  if (logoEl) logoEl.src = logoBase64;
+  
+  document.querySelectorAll(".ambient-product img, .product-3d-card img").forEach(img => {
+    img.src = TC.png;
+  });
+});
+
+// ══════════════════════════════════════════
+// CURSOR
+// ══════════════════════════════════════════
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button,.cap-card,.ind-chip,#product-3d-container').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.width='20px';cursor.style.height='20px';
+    ring.style.width='60px';ring.style.height='60px';
+    ring.style.borderColor='rgba(192,57,43,0.8)';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.width='12px';cursor.style.height='12px';
+    ring.style.width='36px';ring.style.height='36px';
+    ring.style.borderColor='rgba(192,57,43,0.5)';
+  });
+});
+
+// ══════════════════════════════════════════
+// HERO CANVAS — Thermocouple Wire + Heat particles
+// ══════════════════════════════════════════
+(function heroCanvas(){
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let W,H;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+
+  // Thermocouple wires — 3D-ish perspective lines
+  const wires = [];
+  for(let i=0;i<12;i++){
+    wires.push({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      len: 80+Math.random()*200,
+      angle: -Math.PI/6 + Math.random()*Math.PI/3,
+      speed: 0.0003+Math.random()*0.001,
+      phase: Math.random()*Math.PI*2,
+      thick: 0.5+Math.random()*1.5,
+      alpha: 0.05+Math.random()*0.15,
+      color: Math.random()>0.7 ? '192,57,43' : '232,160,32',
+      drift: (Math.random()-0.5)*0.3,
+    });
+  }
+
+  // Heat shimmer particles
+  const particles = [];
+  for(let i=0;i<80;i++){
+    particles.push(mkP());
+  }
+  function mkP(){
+    return{
+      x: Math.random()*W,
+      y: H*0.4+Math.random()*H*0.6,
+      size: 1+Math.random()*3,
+      vy: -(0.3+Math.random()*1.5),
+      vx: (Math.random()-0.5)*0.4,
+      life:0,maxLife:80+Math.random()*120,
+      alpha:0.4+Math.random()*0.4,
+      hue:Math.random()>0.6?'192,57,43':'232,160,32',
+    };
+  }
+
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=0.005;
+
+    // Wires
+    wires.forEach(w=>{
+      const pulse = Math.sin(t*w.speed*600+w.phase);
+      const grd = ctx.createLinearGradient(w.x,w.y,w.x+Math.cos(w.angle)*w.len,w.y+Math.sin(w.angle)*w.len);
+      grd.addColorStop(0,'transparent');
+      grd.addColorStop(0.5, `rgba(${w.color},${w.alpha+pulse*0.05})`);
+      grd.addColorStop(1,'transparent');
+      ctx.save();
+      ctx.beginPath();
+      // slight wave
+      const cx=w.x+Math.cos(w.angle)*w.len*0.5+Math.sin(t+w.phase)*20;
+      const cy=w.y+Math.sin(w.angle)*w.len*0.5+Math.cos(t+w.phase)*10;
+      ctx.moveTo(w.x,w.y);
+      ctx.quadraticCurveTo(cx,cy,w.x+Math.cos(w.angle)*w.len,w.y+Math.sin(w.angle)*w.len);
+      ctx.strokeStyle=grd;
+      ctx.lineWidth=w.thick*(1+pulse*0.3);
+      ctx.stroke();
+      ctx.restore();
+      w.y+=w.drift*0.5;
+      if(w.y<-50)w.y=H+50;
+      if(w.y>H+50)w.y=-50;
+    });
+
+    // Heat shimmer particles
+    particles.forEach((p,i)=>{
+      p.life++;
+      p.x+=p.vx+Math.sin(t*2+i)*0.3;
+      p.y+=p.vy;
+      const lifeRatio=p.life/p.maxLife;
+      const a=p.alpha*(1-lifeRatio)*(lifeRatio<0.2?lifeRatio/0.2:1);
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size*(1-lifeRatio*0.5),0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.hue},${a})`;
+      ctx.fill();
+      if(p.life>=p.maxLife){particles[i]=mkP();}
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════
+// GLOBAL VIEWPORT FIRE CANVAS (ALL OVER WEBSITE)
+// ══════════════════════════════════════════
+(function fireCanvas(){
+  const canvas=document.getElementById('fire-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const NUM=100;          // bottom fire elements
+  const NUM_EMBERS=160;   // global ambient elements
+  const flames=[];
+  const embers=[];
+
+  function mkFlame(x){
+    return{
+      x:x||Math.random()*W,
+      y:H + 20,
+      vx:(Math.random()-0.5)*1.5,
+      vy:-(1.0+Math.random()*2.5),
+      size:4+Math.random()*12,
+      life:0,
+      maxLife:30+Math.random()*60,
+      hue:Math.random()<0.5?0:30,
+      sat:80+Math.random()*20,
+    };
+  }
+
+  function mkEmber(){
+    return {
+      x: Math.random()*W,
+      y: H + Math.random()*100,
+      vx: (Math.random()-0.5)*1.2,
+      vy: -(0.4+Math.random()*1.6),
+      size: 1+Math.random()*2.5,
+      life: 0,
+      maxLife: 250+Math.random()*500,
+      hue: Math.random()<0.4?0:Math.random()<0.8?30:15,
+      sat: 90+Math.random()*10,
+      alpha: 0.25+Math.random()*0.5
+    };
+  }
+
+  for(let i=0;i<NUM;i++)flames.push(mkFlame());
+  for(let i=0;i<NUM_EMBERS;i++)embers.push(mkEmber());
+
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=0.02;
+
+    // 1. Draw screen-wide embers drifting to top
+    embers.forEach((e,i)=>{
+      e.life++;
+      e.x+=e.vx+Math.sin(t+i*0.3)*0.25;
+      e.y+=e.vy;
+      const lr=e.life/e.maxLife;
+      const a=(1-lr)*e.alpha;
+      ctx.beginPath();
+      ctx.arc(e.x,e.y,e.size,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${e.hue},${e.sat}%,60%,${a})`;
+      ctx.fill();
+
+      if(e.life>=e.maxLife || e.y < -10){embers[i]=mkEmber();}
+    });
+
+    // 2. Bottom-focused process flames
+    flames.forEach((f,i)=>{
+      f.life++;
+      f.x+=f.vx+Math.sin(t+i*0.3)*0.4;
+      f.y+=f.vy;
+      f.vy*=0.99;
+      const lr=f.life/f.maxLife;
+      const a=(1-lr)*0.55;
+      const s=f.size*(1-lr*0.6);
+      
+      const grd=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,s*2);
+      grd.addColorStop(0,`hsla(${f.hue},${f.sat}%,60%,${a})`);
+      grd.addColorStop(0.4,`hsla(${f.hue+10},${f.sat}%,45%,${a*0.5})`);
+      grd.addColorStop(1,'transparent');
+      ctx.beginPath();
+      ctx.arc(f.x,f.y,s*2,0,Math.PI*2);
+      ctx.fillStyle=grd;
+      ctx.fill();
+
+      if(f.life>=f.maxLife){flames[i]=mkFlame();}
+    });
+
+    // subtle floor glow
+    const base=ctx.createLinearGradient(0,H-80,0,H);
+    base.addColorStop(0,'transparent');
+    base.addColorStop(1,'rgba(192,57,43,0.12)');
+    ctx.fillStyle=base;
+    ctx.fillRect(0,H-80,W,80);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════════
+// HERO ENTRANCE ANIMATION
+// ══════════════════════════════════════════
+function heroEntrance(){
+  const eyebrow=document.getElementById('he-eyebrow');
+  const h1=document.getElementById('he-h1');
+  const sub=document.getElementById('he-sub');
+  const bar=document.getElementById('he-bar');
+  const hint=document.getElementById('scroll-hint');
+  function animate(el,delay){
+    setTimeout(()=>{
+      el.style.transition='opacity 0.8s ease, transform 0.8s ease';
+      el.style.opacity='1';
+      el.style.transform='translateY(0)';
+    },delay);
+  }
+  animate(eyebrow,200);
+  animate(h1,400);
+  animate(sub,650);
+  animate(bar,900);
+  animate(hint,1400);
+
+  // Set the animation complete flag
+  setTimeout(()=>{
+    window.heroEntranceDone = true;
+  }, 1500);
+}
+window.addEventListener('load',heroEntrance);
+
+// ══════════════════════════════════════════
+// ROLLING NUMBER COUNTER
+// ══════════════════════════════════════════
+function rollNumber(el,duration){
+  const target=parseInt(el.dataset.target);
+  const suffix=el.dataset.suffix||'';
+  const start=Date.now();
+  const startVal=0;
+  
+  // Cancel previous running frame loop on this element to prevent conflicts
+  if (el._rafId) {
+    cancelAnimationFrame(el._rafId);
+  }
+  
+  function frame(){
+    const elapsed=Date.now()-start;
+    const progress=Math.min(elapsed/duration,1);
+    const eased=1-Math.pow(1-progress,4);
+    const val=Math.round(startVal+(target-startVal)*eased);
+    let display=val.toLocaleString();
+    el.textContent=display+suffix;
+    
+    if(progress<1) {
+      el._rafId = requestAnimationFrame(frame);
+    } else {
+      el._rafId = null;
+    }
+  }
+  el._rafId = requestAnimationFrame(frame);
+}
+
+// ══════════════════════════════════════════
+// SCROLL REVEAL (SECTIONS FADE-IN ONCE)
+// ══════════════════════════════════════════
+const revealObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      setTimeout(()=>{
+        el.classList.add('visible');
+      },el.dataset.delay||0);
+      revealObs.unobserve(el);
+    }
+  });
+},{threshold:0.15});
+
+document.querySelectorAll('.reveal').forEach((el,i)=>{
+  el.dataset.delay=((i%4)*120);
+  revealObs.observe(el);
+});
+
+// ══════════════════════════════════════════
+// PERSISTENT MULTI-WAY SCROLL COUNTER
+// ══════════════════════════════════════════
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const el = entry.target;
+    if (entry.isIntersecting) {
+      // Delay the hero stats trigger on initial load to match the header entrance
+      if (el.closest('.hero-bar') && !window.heroEntranceDone) {
+        setTimeout(() => {
+          rollNumber(el, 1200);
+        }, 1000);
+      } else {
+        rollNumber(el, el.classList.contains('num') ? 1200 : 1800);
+      }
+    } else {
+      if (el._rafId) {
+        cancelAnimationFrame(el._rafId);
+        el._rafId = null;
+      }
+      el.textContent = "0" + (el.dataset.suffix || '');
+    }
+  });
+}, { threshold: 0.1 });
+
+// Automatically attach rolling animations to all numeric targets
+document.querySelectorAll('[data-target]').forEach(el => {
+  counterObserver.observe(el);
+});
+
+// VC nodes
+const vcObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      vcObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.2});
+document.querySelectorAll('.vc-node,.vc-feedback').forEach((el,i)=>{
+  el.style.transitionDelay=`${i*0.08}s`;
+  vcObs.observe(el);
+});
+
+// Why rows
+const whyObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');whyObs.unobserve(e.target);}
+  });
+},{threshold:0.2});
+document.querySelectorAll('.why-row').forEach((el,i)=>{
+  el.style.transitionDelay=`${i*0.1}s`;
+  whyObs.observe(el);
+});
+
+// Val cards
+const valObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');valObs.unobserve(e.target);}
+  });
+},{threshold:0.2});
+document.querySelectorAll('.val-card').forEach((el,i)=>{
+  el.style.transitionDelay=`${i*0.1}s`;
+  valObs.observe(el);
+});
+
+// ══════════════════════════════════════════
+// 3D CARD TILT (CAPABILITIES)
+// ══════════════════════════════════════════
+document.querySelectorAll('.cap-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const cx=(e.clientX-r.left)/r.width-0.5;
+    const cy=(e.clientY-r.top)/r.height-0.5;
+    card.style.transform=`perspective(800px) rotateY(${cx*14}deg) rotateX(${-cy*10}deg) translateZ(10px)`;
+    const glow=card.querySelector('.cap-card-glow');
+    const pct=(x,w)=>((x-r.left)/w*100).toFixed(1)+'%';
+    glow.style.setProperty('--mx',pct(e.clientX,r.width));
+    glow.style.setProperty('--my',pct(e.clientY,r.height));
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='perspective(800px) rotateX(0) rotateY(0) translateZ(0)';
+  });
+});
+
+// ══════════════════════════════════════════
+// INTERACTIVE 3D PRODUCT SHOWCASE LOGIC (DRAG / HOVER)
+// ══════════════════════════════════════════
+(function interactiveShowcase() {
+  const pContainer = document.getElementById('product-3d-container');
+  const pCard = document.getElementById('product-3d-card');
+
+  if (pContainer && pCard) {
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let rotX = -12, rotY = 24;
+    let currentRotX = -12, currentRotY = 24;
+
+    // Hover effect (Tilt on hover when not dragging)
+    pContainer.addEventListener('mousemove', (e) => {
+      if (isDragging) return;
+      const rect = pContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const midX = rect.width / 2;
+      const midY = rect.height / 2;
+      
+      const tiltX = -(y - midY) / 8;
+      const tiltY = (x - midX) / 8;
+      pCard.style.transform = `perspective(1200px) rotateX(${currentRotX + tiltX}deg) rotateY(${currentRotY + tiltY}deg) scale(1.04)`;
+    });
+
+    pContainer.addEventListener('mouseleave', () => {
+      if (isDragging) return;
+      pCard.style.transform = `perspective(1200px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg) scale(1)`;
+    });
+
+    // Click/Drag to spin product in 3D
+    pContainer.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      pCard.style.transition = 'none';
+      startX = e.clientX;
+      startY = e.clientY;
+      document.body.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      currentRotY += deltaX * 0.45;
+      currentRotX -= deltaY * 0.45;
+      currentRotX = Math.max(-55, Math.min(55, currentRotX)); // clamp rotation
+
+      pCard.style.transform = `perspective(1200px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        pCard.style.transition = 'transform 0.5s ease-out';
+        document.body.style.cursor = 'none';
+      }
+    });
+
+    // Idle Auto-floating animation
+    let idleTime = 0;
+    function floatStep() {
+      if (!isDragging) {
+        idleTime += 0.01;
+        const floatOffset = Math.sin(idleTime) * 12;
+        currentRotY += 0.04; // slow continuous auto-spin
+        pContainer.style.transform = `translateY(${floatOffset}px)`;
+        pCard.style.transform = `perspective(1200px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+      }
+      requestAnimationFrame(floatStep);
+    }
+    floatStep();
+  }
+})();
+
+// ══════════════════════════════════════════
+// PERSISTENT 3D AMBIENT PARALLAX PRODUCTS
+// ══════════════════════════════════════════
+(function ambient3DProducts() {
+  const ambientPs = [
+    { el: document.getElementById('ambient-p1'), baseRot: 25 },
+    { el: document.getElementById('ambient-p2'), baseRot: -35 },
+    { el: document.getElementById('ambient-p3'), baseRot: 15 }
+  ];
+
+  document.addEventListener('mousemove', (e) => {
+    const cx = (e.clientX / window.innerWidth) - 0.5;
+    const cy = (e.clientY / window.innerHeight) - 0.5;
+
+    ambientPs.forEach(p => {
+      if (p.el) {
+        const rotX = -cy * 25;
+        const rotY = cx * 35;
+        const transX = cx * 35;
+        const transY = cy * 25;
+
+        p.el.style.transform = `translate3d(${transX}px, ${transY}px, 0px) rotate(${p.baseRot}deg) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      }
+    });
+  });
+})();
+
+// ══════════════════════════════════════════
+// HEADER SCROLL EFFECT
+// ══════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const hdr=document.getElementById('header');
+  if(window.scrollY>80){
+    hdr.style.background='rgba(10,10,10,0.95)';
+  }else{
+    hdr.style.background='rgba(10,10,10,0.8)';
+  }
+});
+
+</script>
+</body>
+</html>
