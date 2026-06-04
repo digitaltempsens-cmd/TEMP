@@ -743,7 +743,7 @@ section{position:relative;overflow:hidden;}
 
 <!-- HEADER -->
 <header class="site-header" id="header">
-  <img id="logo.png" alt="Tempsens">
+  <img src="logo.png" alt="Tempsens">
 </header>
 
 <!-- HERO -->
@@ -765,7 +765,7 @@ section{position:relative;overflow:hidden;}
   <!-- INTERACTIVE 3D PRODUCT SHOWCASE -->
   <div class="product-3d-container" id="product-3d-container">
     <div class="product-3d-card" id="product-3d-card">
-      <img id="showcase-img" alt="Interactive Tempsens Thermocouple">
+      <img id="TC.png" alt="Interactive Tempsens Thermocouple">
     </div>
   </div>
 
@@ -1059,7 +1059,7 @@ section{position:relative;overflow:hidden;}
 <section class="why-section">
   <!-- 3D Ambient Product (reacts to mouse) -->
   <div class="ambient-product" id="ambient-p3" style="top: 15%; left: -3%;">
-    <img alt="Ambient thermocouple">
+    <img alt="Ambient ">
   </div>
   <div class="s-inner">
     <div class="reveal">
@@ -1079,7 +1079,7 @@ section{position:relative;overflow:hidden;}
       </div>
       <div class="why-row">
         <div class="why-num">03</div>
-        <div><div class="why-title">Custom engineering capability</div><div class="why-body">Standard sensors fail in non-standard conditions. Tempsens designs and manufactures custom thermocouples, MI assemblies, and thermal systems for high-vibration, high-pressure, high-corrosion applications.</div></div>
+        <div><div class="why-title">Custom engineering capability</div><div class="why-body">Standard sensors fail in non-standard conditions. Tempsens designs and manufactures custom s, MI assemblies, and thermal systems for high-vibration, high-pressure, high-corrosion applications.</div></div>
       </div>
       <div class="why-row">
         <div class="why-num">04</div>
@@ -1138,7 +1138,7 @@ section{position:relative;overflow:hidden;}
 // ASSET LOADER (PREVENTS OFFLINE/BROKEN PATHS)
 // ══════════════════════════════════════════
 const logoBase64 = "REPLACE_LOGO_BASE64";
-const thermocoupleBase64 = "REPLACE_TC_BASE64";
+const Base64 = "REPLACE_TC_BASE64";
 
 document.addEventListener("DOMContentLoaded", () => {
   const logoEl = document.getElementById("logo.png");
@@ -1178,7 +1178,7 @@ document.querySelectorAll('a,button,.cap-card,.ind-chip,#product-3d-container').
 });
 
 // ══════════════════════════════════════════
-// HERO CANVAS — Thermocouple Wire + Heat particles
+// HERO CANVAS —  Wire + Heat particles
 // ══════════════════════════════════════════
 (function heroCanvas(){
   const canvas = document.getElementById('hero-canvas');
@@ -1188,7 +1188,7 @@ document.querySelectorAll('a,button,.cap-card,.ind-chip,#product-3d-container').
   resize();
   window.addEventListener('resize',resize);
 
-  // Thermocouple wires — 3D-ish perspective lines
+  //  wires — 3D-ish perspective lines
   const wires = [];
   for(let i=0;i<12;i++){
     wires.push({
